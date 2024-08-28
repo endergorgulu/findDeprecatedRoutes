@@ -1,38 +1,47 @@
+# Azure Network Analysis Tool
 
-# Find Deprecated Routes in Azure Virtual Networks
+This PowerShell script exports and analyzes Azure network data to identify potential discrepancies in routing configurations.
 
-This project contains PowerShell scripts for exporting Azure network data and analyzing it for deprecated routes, specifically focusing on ensuring compatibility with virtual networks having multiple address ranges.
+## Features
 
-## Files
-
-- `exportData.ps1`: Exports Azure network data, including virtual network and routing table information for each subscription, and saves it in JSON format.
-- `analyzeData.ps1`: Analyzes the exported network data to identify routes that do not match any address space in the virtual networks, handling multiple address ranges per network.
-
-## How to Use
-
-1. Update the `$rootDirectory` variable in `exportData.ps1` to your desired output location.
-2. Execute `exportData.ps1` in PowerShell. This script creates `/vnets/` and `/routes/` directories within `$rootDirectory`. For each Azure subscription, it generates a JSON file with virtual network and routing table information.
-3. Run `analyzeData.ps1` in PowerShell. This script reads the JSON files from the `/vnets/` and `/routes/` directories, compares the routes with the virtual network address spaces (including multiple address ranges), and outputs a list of routes that are not covered by any virtual network address space.
+- Exports Virtual Network and Route Table data from Azure subscriptions
+- Analyzes routes to identify those not matching any Virtual Network address space
+- Supports filtering by region and excluding specific IP ranges
+- Outputs results to a CSV file for easy review
 
 ## Prerequisites
 
-- PowerShell installed on your machine.
-- Azure PowerShell module installed. Install it using `Install-Module -Name Az -AllowClobber -Scope CurrentUser`.
-- Access to an Azure account with at least `Read permissions` for network data retrieval.
+- PowerShell 5.1 or later
+- Azure PowerShell module (`Az`)
+- Azure account with appropriate permissions to read network configurations
 
-## Steps in `exportData.ps1`
+## Usage
 
-1. Log in to Azure and retrieve all subscriptions.
-2. Define the root directory for output (`$rootDirectory`).
-3. Optionally specify a specific route table name for export.
-4. Create `/routes/` and `/vnets/` directories if they do not exist.
-5. Export virtual network and route table data to JSON files in the respective directories.
+1. Clone or download this repository to your local machine.
 
-## Steps in `analyzeData.ps1`
+2. Open PowerShell and navigate to the script directory.
 
-1. Set the base directory to the location where JSON files are stored.
-2. Define subdirectories for virtual networks and route tables.
-3. Specify the region to filter by (if needed) and define IP ranges to exclude.
-4. Read and parse all virtual network and route table JSON files.
-5. Compare each route with virtual network address spaces, handling multiple address ranges.
-6. Output the discrepancies to a CSV file.
+3. Run the script with desired parameters:
+
+```powershell
+.\AzureNetworkAnalysis.ps1 -rootDirectory "C:\AzureData" -specificRouteTableName "MyRouteTable" -desiredRegion "EastUS" -excludedIPRanges @("10.0.0.0/8", "172.16.0.0/12")
+```
+
+### Parameters
+
+- `rootDirectory`: Directory for storing exported data and results (default: "/Users/ender/Downloads/testexportroutes")
+- `specificRouteTableName`: Name of a specific route table to analyze (optional)
+- `desiredRegion`: Azure region to filter results (optional)
+- `excludedIPRanges`: Array of IP ranges to exclude from analysis (optional)
+
+## Output
+
+The script generates a CSV file named `discrepancies.csv` in the root directory, containing routes that don't match any Virtual Network address space.
+
+## Contributing
+
+Contributions to improve the script are welcome. Please submit a pull request or open an issue to discuss proposed changes.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
